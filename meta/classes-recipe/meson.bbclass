@@ -73,6 +73,7 @@ nm = ${@meson_array('NM', d)}
 strip = ${@meson_array('STRIP', d)}
 readelf = ${@meson_array('READELF', d)}
 objcopy = ${@meson_array('OBJCOPY', d)}
+cmake = 'cmake'
 pkg-config = 'pkg-config'
 llvm-config = 'llvm-config'
 cups-config = 'cups-config'
