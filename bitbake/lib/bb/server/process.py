@@ -38,10 +38,15 @@ logger = logging.getLogger('BitBake')
 class ProcessTimeout(SystemExit):
     pass
 
+logfile_global = None
+
 def currenttime():
     return datetime.datetime.now().strftime('%H:%M:%S.%f')
 
 def serverlog(msg):
+    if logfile_global:
+        with open(logfile_global + ".2", "a+") as f:
+            f.write(str(os.getpid()) + " " +  currenttime() + " " + msg + "\n")
     print(str(os.getpid()) + " " +  currenttime() + " " + msg)
     #Seems a flush here triggers filesytem sync like behaviour and long hangs in the server
     sys.stdout.flush()
@@ -109,6 +114,9 @@ class ProcessServer():
         # It is possible the directory may be renamed. Cache the inode of the socket file
         # so we can tell if things changed.
         self.sockinode = os.stat(self.sockname)[stat.ST_INO]
+
+        global logfile_global
+        logfile_global = sockname
 
         self.server_timeout = server_timeout
         self.timeout = self.server_timeout
@@ -562,6 +570,7 @@ class BitBakeProcessServerConnection(object):
 
 start_log_format = '--- Starting bitbake server pid %s at %s ---'
 start_log_datetime_format = '%Y-%m-%d %H:%M:%S.%f'
+
 
 class BitBakeServer(object):
 
